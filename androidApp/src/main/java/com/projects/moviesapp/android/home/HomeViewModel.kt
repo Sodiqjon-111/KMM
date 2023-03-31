@@ -1,5 +1,7 @@
 package com.projects.moviesapp.android.home
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,6 +18,7 @@ class HomeViewModel(
     private var currentPage = 1
 
     init {
+        Log.d(TAG, "++++++++++++++++++++++ view model")
         loadMovies(forceReload = false)
     }
 
@@ -31,9 +34,13 @@ class HomeViewModel(
             )
 
             try {
-                val resultMovies = getMoviesUseCase(page = currentPage)
-                val movies = if (currentPage == 1) resultMovies else uiState.movies + resultMovies
+                Log.d(TAG, "8888888888")
 
+               val resultMovies = getMoviesUseCase(page = currentPage)
+                Log.d(TAG, "77777777")
+                Log.d(TAG, "${resultMovies}")
+                val movies = if (currentPage == 1) resultMovies else uiState.movies + resultMovies
+                Log.d(TAG, "6666666")
                 currentPage += 1
                 uiState = uiState.copy(
                     loading = false,
@@ -43,6 +50,8 @@ class HomeViewModel(
                 )
 
             } catch (error: Throwable) {
+                Log.d(TAG, "Could not load movies  Sodiqjon: ${error.localizedMessage}")
+                Log.d(TAG, "Could not load movies  Sodiqjon: ${error.message}")
                 uiState = uiState.copy(
                     loading = false,
                     refreshing = false,

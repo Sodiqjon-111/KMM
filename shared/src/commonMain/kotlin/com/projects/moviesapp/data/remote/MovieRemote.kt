@@ -9,6 +9,6 @@ internal data class MovieRemote(
     val overview: String,
     @SerialName("poster_path")
     val posterImage: String,
-    @SerialName("release_data")
-    val releaseDate: String,
+    @SerialName("release_date")
+    val releaseDate: String
 )
