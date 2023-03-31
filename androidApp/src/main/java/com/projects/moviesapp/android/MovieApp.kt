@@ -48,7 +48,6 @@ fun MovieApp() {
         backStackEntry?.destination?.route == it.route ||
                 backStackEntry?.destination?.route == it.routeWithArgs
     } ?: Home
-    val textState = remember { mutableStateOf(TextFieldValue("")) }
 
     Scaffold(
         scaffoldState = scaffoldState,
