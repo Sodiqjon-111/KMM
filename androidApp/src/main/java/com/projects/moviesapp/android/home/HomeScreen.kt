@@ -93,6 +93,7 @@ fun HomeScreen(
                 refreshing = uiState.refreshing,
                 state = pullRefreshState,
                 modifier = modifier.align(Alignment.TopCenter)
+
             )
         }
     }
