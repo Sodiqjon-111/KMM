@@ -31,6 +31,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.projects.moviesapp.android.common.Detail
+import com.projects.moviesapp.android.home.Home2
+import com.projects.moviesapp.android.home.HomeScreen
+import com.projects.moviesapp.android.home.HomeViewModel
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -72,7 +77,18 @@ sealed class Screens(val route: String) {
 fun NavigationSetup(navController: NavHostController) {
     NavHost(navController, startDestination = BottomNavItem.Home.route) {
         composable(BottomNavItem.Home.route) {
-            MovieApp()
+            val homeViewModel: HomeViewModel = koinViewModel()
+            Home2(
+                uiState = homeViewModel.uiState,
+                loadNextMovies = {
+                    homeViewModel.loadMovies(forceReload = it)
+                },
+                navigateToDetail = {
+                    navController.navigate(
+                        "${Detail.route}/${it.id}"
+                    )
+                }
+            )
         }
         composable(BottomNavItem.Settings.route) {
             //  SettingsScreen(navController)
