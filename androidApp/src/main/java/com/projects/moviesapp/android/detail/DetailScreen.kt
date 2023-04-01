@@ -29,6 +29,8 @@ fun DetailScreen(
                 modifier = modifier
                     .fillMaxSize()
                     .background(color = MaterialTheme.colors.background)
+                    .padding(0.dp, 6.dp)
+
             ) {
                 AsyncImage(
                     model = movie.imageUrl,
@@ -54,7 +56,9 @@ fun DetailScreen(
 
                     Button(
                         onClick = {},
-                        modifier = modifier.fillMaxWidth().height(46.dp),
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .height(46.dp),
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Red
                         ),
@@ -86,7 +90,7 @@ fun DetailScreen(
             }
         }
 
-        if (uiState.loading){
+        if (uiState.loading) {
             Row(
                 modifier = modifier.fillMaxSize(),
                 verticalAlignment = Alignment.CenterVertically,

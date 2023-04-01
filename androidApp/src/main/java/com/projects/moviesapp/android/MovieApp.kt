@@ -5,12 +5,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -82,9 +81,10 @@ fun MovieApp() {
             }
 
             composable(Detail.routeWithArgs, arguments = Detail.arguments) {
-                val movieId = it.arguments?.getString("movieId") ?: "0"
+                val movieId = it.arguments?.getInt("movieId") ?: "0"
+
                 val detailViewModel: DetailViewModel = koinViewModel(
-                    parameters = { parametersOf(movieId.toInt()) }
+                    parameters = { parametersOf(movieId) }
                 )
 
                 DetailScreen(uiState = detailViewModel.uiState)

@@ -20,7 +20,6 @@ internal abstract class KtorApi {
         }
     }
 
-
     fun HttpRequestBuilder.pathUrl(path: String) {
         url {
             takeFrom(BASE_URL)
