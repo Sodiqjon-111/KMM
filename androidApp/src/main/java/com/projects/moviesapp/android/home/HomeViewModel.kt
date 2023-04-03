@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.projects.moviesapp.domain.model.Movie
@@ -14,7 +16,12 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     val getMoviesUseCase: GetMoviesUseCase
 ) : ViewModel() {
+    val _myListLiveData = MutableLiveData<MutableList<Movie>>()
+    val myListLiveData: LiveData<MutableList<Movie>> get() = _myListLiveData
+
     var uiState by mutableStateOf(HomeScreenState())
+    var viewModelAllList = emptyList<Movie>()
+    var  favouriteList = MutableLiveData<MutableList<Movie>>()
     private var currentPage = 1
 
     init {
@@ -43,6 +50,8 @@ class HomeViewModel(
                     loadFinished = resultMovies.isEmpty(),
                     movies = movies
                 )
+                viewModelAllList=uiState.movies
+
 
             } catch (error: Throwable) {
                 Log.d(TAG, "Could not load movies  Sodiqjon: ${error.localizedMessage}")
@@ -55,6 +64,24 @@ class HomeViewModel(
             }
         }
     }
+    fun addToList(item: Movie) {
+        val currentlist = _myListLiveData.value ?: mutableListOf()
+        currentlist.add(item)
+        _myListLiveData.value = currentlist
+    }
+
+
+    fun removeFromList(item: Movie) {
+        val currentlist = _myListLiveData.value ?: mutableListOf()
+        currentlist.add(item)
+        _myListLiveData.value = currentlist
+    }
+
+    fun getList(): MutableList<Movie> {
+        return _myListLiveData.value ?: mutableListOf()
+    }
+
+
 }
 
 

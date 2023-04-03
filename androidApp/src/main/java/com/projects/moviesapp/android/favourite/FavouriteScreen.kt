@@ -1,5 +1,4 @@
-package com.projects.moviesapp.android.home
-
+package com.projects.moviesapp.android.favourite
 
 import android.content.ContentValues.TAG
 import android.util.Log
@@ -13,9 +12,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,29 +21,28 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.projects.moviesapp.android.Red
-import com.projects.moviesapp.android.favourite.FavouriteViewModel
+import com.projects.moviesapp.android.home.HomeScreenState
+import com.projects.moviesapp.android.home.HomeViewModel
+import com.projects.moviesapp.android.home.MovieListItem
 import com.projects.moviesapp.domain.model.Movie
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeScreen(
+fun FavouriteScreen(
     modifier: Modifier = Modifier,
     uiState: HomeScreenState,
-    loadNextMovies: (Boolean) -> Unit,
+//    loadNextMovies: (Boolean) -> Unit,
     navigateToDetail: (Movie) -> Unit,
     viewModel: HomeViewModel,
     favouriteViewModel: FavouriteViewModel,
+    // items:MutableList<Movie>
 ) {
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.refreshing,
-        onRefresh = { loadNextMovies(true) })
+
     var listAlll= mutableListOf<Movie>()
     viewModel.myListLiveData.observeForever{
         listAlll = viewModel.getList()
-        Log.d(TAG, "Sodiqjon5555: ${listAlll}")
+        Log.d(TAG, "Sodiqjon999: ${listAlll}")
     }
 
-    val listAll = viewModel.viewModelAllList
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -56,13 +51,14 @@ fun HomeScreen(
         var searchQuery by remember { mutableStateOf("") }
         SearchBar(searchQuery) { query ->
             searchQuery = query
-            uiState.movies = filterItems(searchQuery, listAll)
+            //uiState.movies = filterItems(searchQuery, listAll)
+            // Log.d(ControlsProviderService.TAG, "============${uiState.movies}")
         }
         Box(
             modifier = modifier
                 .fillMaxSize()
                 .background(color = MaterialTheme.colors.background)
-                .pullRefresh(state = pullRefreshState)
+
         ) {
 
             LazyVerticalGrid(
@@ -70,7 +66,9 @@ fun HomeScreen(
                 contentPadding = PaddingValues(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
+            )
+
+            {
                 itemsIndexed(
                     uiState.movies,
                     key = { _, movie -> movie.id }
@@ -82,7 +80,7 @@ fun HomeScreen(
                         favouriteViewModel = favouriteViewModel
                     )
                     if (index >= uiState.movies.size - 1 && !uiState.loading && !uiState.loadFinished) {
-                        LaunchedEffect(key1 = Unit, block = { loadNextMovies(false) })
+                        LaunchedEffect(key1 = Unit, block = { })
                     }
                 }
                 if (uiState.loading && uiState.movies.isNotEmpty()) {
@@ -101,13 +99,6 @@ fun HomeScreen(
                     }
                 }
             }
-
-            PullRefreshIndicator(
-                refreshing = uiState.refreshing,
-                state = pullRefreshState,
-                modifier = modifier.align(Alignment.TopCenter)
-
-            )
         }
 
 
@@ -170,6 +161,3 @@ fun SearchBar(
         )
     )
 }
-
-
-

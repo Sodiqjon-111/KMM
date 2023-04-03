@@ -1,30 +1,19 @@
 package com.projects.moviesapp.android
 
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -32,10 +21,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.projects.moviesapp.android.common.Detail
-import com.projects.moviesapp.android.home.Home2
+import com.projects.moviesapp.android.detail.DetailScreen
+import com.projects.moviesapp.android.detail.DetailViewModel
+import com.projects.moviesapp.android.favourite.FavouriteScreen
+import com.projects.moviesapp.android.favourite.FavouriteViewModel
 import com.projects.moviesapp.android.home.HomeScreen
 import com.projects.moviesapp.android.home.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -47,7 +40,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    val textState = remember { mutableStateOf(TextFieldValue("")) }
+                    //  val textState = remember { mutableStateOf(TextFieldValue("")) }
                     Column {
 
                         //SearchViewMine(state = textState);
@@ -78,7 +71,7 @@ fun NavigationSetup(navController: NavHostController) {
     NavHost(navController, startDestination = BottomNavItem.Home.route) {
         composable(BottomNavItem.Home.route) {
             val homeViewModel: HomeViewModel = koinViewModel()
-            Home2(
+            HomeScreen(
                 uiState = homeViewModel.uiState,
                 loadNextMovies = {
                     homeViewModel.loadMovies(forceReload = it)
@@ -87,11 +80,35 @@ fun NavigationSetup(navController: NavHostController) {
                     navController.navigate(
                         "${Detail.route}/${it.id}"
                     )
-                }
+                },
+                viewModel = homeViewModel,
+                favouriteViewModel = FavouriteViewModel()
             )
         }
         composable(BottomNavItem.Settings.route) {
-            //  SettingsScreen(navController)
+            val homeViewModel: HomeViewModel = koinViewModel()
+
+            FavouriteScreen(
+                  uiState = homeViewModel.uiState,
+//                  loadNextMovies = {
+//                     // homeViewModel.loadMovies(forceReload = it)
+//                  },
+                  navigateToDetail = {
+                      navController.navigate(
+                          "${Detail.route}/${it.id}"
+                      )
+                  },
+                  viewModel = homeViewModel,
+                favouriteViewModel = FavouriteViewModel()
+              )
+        }
+        composable(Detail.routeWithArgs, arguments = Detail.arguments) {
+            val movieId = it.arguments?.getInt("movieId") ?: "0"
+            val detailViewModel: DetailViewModel = koinViewModel(
+                parameters = { parametersOf(movieId) }
+            )
+
+            DetailScreen(uiState = detailViewModel.uiState, navController = navController)
         }
 
     }
