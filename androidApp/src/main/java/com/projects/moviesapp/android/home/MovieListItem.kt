@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.projects.moviesapp.android.R
+import com.projects.moviesapp.android.dao.MoviesViewModel
 import com.projects.moviesapp.android.favourite.FavouriteViewModel
 import com.projects.moviesapp.domain.model.Movie
 
@@ -30,8 +31,10 @@ fun MovieListItem(
     movie: Movie,
     onMovieClick: (Movie) -> Unit,
     viewModel: HomeViewModel,
-    favouriteViewModel: FavouriteViewModel
+    favouriteViewModel: FavouriteViewModel,
+    roomViewModel: MoviesViewModel
 ) {
+
     Card(
         modifier = modifier
             .height(220.dp)
@@ -62,13 +65,16 @@ fun MovieListItem(
                         painter = painterResource(id = R.drawable.play_button),
                         contentDescription = null,
                         modifier = modifier
-                            .padding(12.dp)
+                            .padding(18.dp)
                             .align(Alignment.Center)
                     )
                 }
             }
 
-            Row (modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
+            Row(
+                modifier = Modifier.align(Alignment.End),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Column(
                     modifier = modifier.padding(10.dp)
                 ) {
@@ -83,44 +89,50 @@ fun MovieListItem(
 
                     Text(text = movie.releaseDate, style = MaterialTheme.typography.caption)
                 }
-Box(modifier = Modifier.fillMaxWidth()){
-    IconButton(
-        //modifier = Modifier.align(Alignment.End),
-        onClick = {
-            if (!movie.isFavourite) {
-                // viewModel.favouriteList.value?.add(movie)
-                viewModel.addToList(movie)
-                movie.isFavourite = true
-            } else {
-                // viewModel.favouriteList.value?.remove(movie)
-                viewModel.removeFromList(movie)
-                movie.isFavourite = false
+                Box(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth()
+                ) {
+                    IconButton(
+                        modifier = Modifier.align(Alignment.CenterEnd),
+                        onClick = {
+                            if (!movie.isFavourite) {
+                                viewModel.addToList(movie)
+                                movie.isFavourite = true
 
-            }
-            Log.d(TAG, "8888888888 Favourite  ${viewModel.favouriteList}")
-        },
-    ) {
 
-        if (movie.isFavourite) {
-            Icon(
-                painter = painterResource(id = R.drawable.favourite),
-                contentDescription = null,
-                Modifier.size(40.dp),
-                tint = Color.Red,
+                            } else {
+                                // viewModel.favouriteList.value?.remove(movie)
+                                viewModel.removeFromList(movie)
+                                movie.isFavourite = false
 
-                )
-        } else {
-            Icon(
-                painter = painterResource(id = R.drawable.favourite),
-                contentDescription = null,
-                Modifier.size(40.dp),
-                tint = Color.White,
+                            }
+                            Log.d(TAG, "8888888888 Favourite  ${viewModel.favouriteList}")
+                        },
+                    )
+                    {
+                        if (movie.isFavourite) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.favourite),
+                                contentDescription = null,
+                                Modifier.size(36.dp),
+                                tint = Color.Red,
 
-                )
-        }
+                                )
+                        } else {
+                            Icon(
+                                painter = painterResource(id = R.drawable.favourite),
+                                contentDescription = null,
+                                Modifier.size(36.dp),
+                                tint = Color.White,
 
-    }
-}
+                                )
+                        }
+
+                    }
+                }
+
 
             }
         }

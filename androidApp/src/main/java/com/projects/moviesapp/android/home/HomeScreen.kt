@@ -1,14 +1,13 @@
 package com.projects.moviesapp.android.home
 
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -18,16 +17,20 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.projects.moviesapp.android.Red
+import com.projects.moviesapp.android.dao.MoviesViewModel
 import com.projects.moviesapp.android.favourite.FavouriteViewModel
 import com.projects.moviesapp.domain.model.Movie
 
+@ExperimentalComposeUiApi
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
@@ -37,14 +40,15 @@ fun HomeScreen(
     navigateToDetail: (Movie) -> Unit,
     viewModel: HomeViewModel,
     favouriteViewModel: FavouriteViewModel,
+    roomViewModel: MoviesViewModel
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.refreshing,
         onRefresh = { loadNextMovies(true) })
-    var listAlll= mutableListOf<Movie>()
-    viewModel.myListLiveData.observeForever{
-        listAlll = viewModel.getList()
-        Log.d(TAG, "Sodiqjon5555: ${listAlll}")
+
+
+    viewModel.myListLiveData.observeForever {
     }
 
     val listAll = viewModel.viewModelAllList
@@ -54,10 +58,18 @@ fun HomeScreen(
     ) {
 
         var searchQuery by remember { mutableStateOf("") }
-        SearchBar(searchQuery) { query ->
-            searchQuery = query
-            uiState.movies = filterItems(searchQuery, listAll)
-        }
+        SearchBar(searchQuery,
+            onTextChange = { query ->
+                searchQuery = query
+                uiState.movies = filterItems(searchQuery, listAll)
+            },
+            onClearText = {
+                // Handle onClearText event
+                keyboardController?.hide()
+                searchQuery = ""
+                uiState.movies = filterItems(searchQuery, listAll)
+            }
+        )
         Box(
             modifier = modifier
                 .fillMaxSize()
@@ -79,7 +91,9 @@ fun HomeScreen(
                         movie = movie,
                         onMovieClick = { navigateToDetail(movie) },
                         viewModel = viewModel,
-                        favouriteViewModel = favouriteViewModel
+                        favouriteViewModel = favouriteViewModel,
+                        roomViewModel = roomViewModel
+
                     )
                     if (index >= uiState.movies.size - 1 && !uiState.loading && !uiState.loadFinished) {
                         LaunchedEffect(key1 = Unit, block = { loadNextMovies(false) })
@@ -125,7 +139,12 @@ fun filterItems(searchQuery: String, commonlist: List<Movie>): List<Movie> {
 fun SearchBar(
     searchQuery: String,
     onTextChange: (String) -> Unit,
+    onClearText: () -> Unit
 ) {
+    Surface(
+        shape = RoundedCornerShape(20.dp),
+    ) {
+    }
     TextField(
         value = searchQuery,
         onValueChange = { onTextChange(it) },
@@ -135,9 +154,8 @@ fun SearchBar(
             if (!searchQuery.equals("")) {
                 IconButton(
                     onClick = {
-
-                        Log.d(TAG, "3333333333333333333")
-
+                        onTextChange("")
+                        onClearText
                         // Remove text from TextField when you press the 'X' icon
                     }
                 ) {

@@ -11,5 +11,7 @@ class MyApp : Application() {
         startKoin {
             modules(appModule + getSharedModules())
         }
+
+
     }
 }

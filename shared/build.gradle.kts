@@ -1,8 +1,16 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
+    id ("kotlin-parcelize")
+    id ("kotlin-kapt")
 
     kotlin("plugin.serialization") version "1.8.0"
+
+}
+android{
+    buildFeatures{
+        compose=true
+    }
 }
 
 kotlin {
@@ -37,7 +45,8 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0") // add this
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
                 //Use api so that the android app can use it as well
                 api("io.insert-koin:koin-core:$koinVersion")
             }
@@ -56,6 +65,14 @@ kotlin {
                 implementation("io.ktor:ktor-client-android:$ktorVersion")
 
                 api("io.insert-koin:koin-android:$koinVersion")
+
+                // Room
+                val room_version = "2.5.0"
+
+                implementation("androidx.room:room-ktx:$room_version")
+                implementation("androidx.room:room-runtime:$room_version")
+//               annotationProcessor("androidx.room:room-compiler:$room_version")
+//                kapt("androidx.room:room-compiler:$room_version")
             }
         }
 

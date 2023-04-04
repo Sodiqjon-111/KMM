@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
@@ -21,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.projects.moviesapp.android.common.Detail
+import com.projects.moviesapp.android.dao.MoviesViewModel
 import com.projects.moviesapp.android.detail.DetailScreen
 import com.projects.moviesapp.android.detail.DetailViewModel
 import com.projects.moviesapp.android.favourite.FavouriteScreen
@@ -61,16 +63,16 @@ class MainActivity : ComponentActivity() {
 
 sealed class Screens(val route: String) {
     object Home : Screens("home_screen")
-    object Settings : Screens("settings_screen")
-    object About : Screens("about_screen")
+    object Favourite : Screens("settings_screen")
 }
 
-
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun NavigationSetup(navController: NavHostController) {
     NavHost(navController, startDestination = BottomNavItem.Home.route) {
         composable(BottomNavItem.Home.route) {
             val homeViewModel: HomeViewModel = koinViewModel()
+            val roomViewModel: MoviesViewModel = koinViewModel()
             HomeScreen(
                 uiState = homeViewModel.uiState,
                 loadNextMovies = {
@@ -82,25 +84,28 @@ fun NavigationSetup(navController: NavHostController) {
                     )
                 },
                 viewModel = homeViewModel,
-                favouriteViewModel = FavouriteViewModel()
+                favouriteViewModel = FavouriteViewModel(),
+                roomViewModel = roomViewModel
             )
         }
         composable(BottomNavItem.Settings.route) {
             val homeViewModel: HomeViewModel = koinViewModel()
+            val roomViewModel: MoviesViewModel = koinViewModel()
 
             FavouriteScreen(
-                  uiState = homeViewModel.uiState,
+                uiState = homeViewModel.uiState,
 //                  loadNextMovies = {
 //                     // homeViewModel.loadMovies(forceReload = it)
 //                  },
-                  navigateToDetail = {
-                      navController.navigate(
-                          "${Detail.route}/${it.id}"
-                      )
-                  },
-                  viewModel = homeViewModel,
-                favouriteViewModel = FavouriteViewModel()
-              )
+                navigateToDetail = {
+                    navController.navigate(
+                        "${Detail.route}/${it.id}"
+                    )
+                },
+                viewModel = homeViewModel,
+                favouriteViewModel = FavouriteViewModel(),
+                roomViewModel = roomViewModel
+            )
         }
         composable(Detail.routeWithArgs, arguments = Detail.arguments) {
             val movieId = it.arguments?.getInt("movieId") ?: "0"
@@ -126,7 +131,7 @@ sealed class BottomNavItem(
     )
 
     object Settings : BottomNavItem(
-        route = Screens.Settings.route,
+        route = Screens.Favourite.route,
         titleRes = "Favourites",
         icon = Icons.Default.Favorite
     )

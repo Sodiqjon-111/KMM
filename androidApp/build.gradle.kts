@@ -1,6 +1,9 @@
 plugins {
     id("com.android.application")
+   // id ("kotlin-kapt")
+    id ("kotlin-parcelize")
     kotlin("android")
+    kotlin("plugin.serialization") version "1.6.0"
 }
 
 android {
@@ -44,7 +47,6 @@ dependencies {
     val coilVersion = "2.2.2"
     val accompanistVersion = "0.28.0"
     val navVersion = "2.5.3"
-
     implementation(project(":shared"))
     implementation("androidx.compose.ui:ui:1.4.0")
     implementation("androidx.compose.ui:ui-tooling:1.4.0")
@@ -57,4 +59,14 @@ dependencies {
     implementation("io.coil-kt:coil-compose:$coilVersion")
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
     implementation("androidx.navigation:navigation-compose:$navVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0") // add this
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+
+    // Room
+    val room_version = "2.5.0"
+
+    implementation("androidx.room:room-ktx:$room_version")
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+    //kapt("androidx.room:room-compiler:$room_version")
 }
