@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-   // id ("kotlin-kapt")
+    id ("kotlin-kapt")
     id ("kotlin-parcelize")
     kotlin("android")
     kotlin("plugin.serialization") version "1.6.0"
@@ -61,6 +61,9 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0") // add this
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+    // Coroutine Lifecycle Scopes
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 
     // Room
     val room_version = "2.5.0"
@@ -68,5 +71,5 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
-    //kapt("androidx.room:room-compiler:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
 }

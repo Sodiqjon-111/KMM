@@ -8,9 +8,9 @@ import com.projects.moviesapp.di.getSharedModules
 import org.koin.core.context.startKoin
 
 class MyApp : Application() {
-
-    val database by lazy { AppDataBase.getDatabase(this) }
-    val repository by lazy { MovieRepository(database.movieDao()) }
+//
+//    val database by lazy { AppDataBase.getDatabase(this) }
+//    val repository by lazy { MovieRepository(database.movieDao()) }
     override fun onCreate() {
         super.onCreate()
         startKoin {

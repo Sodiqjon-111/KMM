@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "MoviesApp"
 include(":androidApp")
 include(":shared")
+include(":kotlinmultiplatformsharedmodule")
