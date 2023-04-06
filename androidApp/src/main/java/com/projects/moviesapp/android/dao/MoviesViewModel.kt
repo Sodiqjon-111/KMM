@@ -2,24 +2,32 @@ package com.projects.moviesapp.android.dao
 
 
 import Movies
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-class MoviesViewModel:ViewModel() {
-
-  //  private val myDao: MovieDao
-    //private val myDataBase= Room.databaseBuilder(application,AppDataBase::class.java,"my_database").build()
+class MoviesViewModel(application: Application
+) : ViewModel() {
 
 
-     init {
-          //myDao=myDataBase.movieDao()
-        }
+    val allProducts: List<Movies>
+    private val repository: MovieRepository
 
-    fun insertMovies(movies: Movies){
-        viewModelScope.launch {
-           // myDao.insert(movies)
-        }
+    init {
+
+        val movDataBase=AppDataBase.getDatabase(application)
+        val movieDao=movDataBase.movieDao()
+
+        repository = MovieRepository(movieDao)
+
+        allProducts = repository.allMovies
     }
 
+
+
+    fun insert(movies: Movies)=viewModelScope.launch {
+        repository.insert(movies)
+    }
 }
+

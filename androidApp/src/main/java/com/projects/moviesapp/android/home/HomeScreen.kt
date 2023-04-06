@@ -26,7 +26,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.projects.moviesapp.android.Red
-import com.projects.moviesapp.android.dao.MoviesViewModel
 import com.projects.moviesapp.android.favourite.FavouriteViewModel
 import com.projects.moviesapp.domain.model.Movie
 
@@ -40,8 +39,9 @@ fun HomeScreen(
     navigateToDetail: (Movie) -> Unit,
     viewModel: HomeViewModel,
     favouriteViewModel: FavouriteViewModel,
-    roomViewModel: MoviesViewModel
+    //roomViewModel: MoviesViewModel
 ) {
+
     val keyboardController = LocalSoftwareKeyboardController.current
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.refreshing,
@@ -91,8 +91,8 @@ fun HomeScreen(
                         movie = movie,
                         onMovieClick = { navigateToDetail(movie) },
                         viewModel = viewModel,
-                        favouriteViewModel = favouriteViewModel,
-                        roomViewModel = roomViewModel
+                        //favouriteViewModel = favouriteViewModel,
+                     //   roomViewModel = roomViewModel
 
                     )
                     if (index >= uiState.movies.size - 1 && !uiState.loading && !uiState.loadFinished) {

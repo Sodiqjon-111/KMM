@@ -22,7 +22,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.projects.moviesapp.android.common.Detail
-import com.projects.moviesapp.android.dao.MoviesViewModel
 import com.projects.moviesapp.android.detail.DetailScreen
 import com.projects.moviesapp.android.detail.DetailViewModel
 import com.projects.moviesapp.android.favourite.FavouriteScreen
@@ -72,7 +71,7 @@ fun NavigationSetup(navController: NavHostController) {
     NavHost(navController, startDestination = BottomNavItem.Home.route) {
         composable(BottomNavItem.Home.route) {
             val homeViewModel: HomeViewModel = koinViewModel()
-            val roomViewModel: MoviesViewModel = koinViewModel()
+           // val roomViewModel: MoviesViewModel = koinViewModel()
             HomeScreen(
                 uiState = homeViewModel.uiState,
                 loadNextMovies = {
@@ -85,12 +84,12 @@ fun NavigationSetup(navController: NavHostController) {
                 },
                 viewModel = homeViewModel,
                 favouriteViewModel = FavouriteViewModel(),
-                roomViewModel = roomViewModel
+               // roomViewModel = roomViewModel
             )
         }
         composable(BottomNavItem.Settings.route) {
             val homeViewModel: HomeViewModel = koinViewModel()
-            val roomViewModel: MoviesViewModel = koinViewModel()
+           // val roomViewModel: MoviesViewModel = koinViewModel()
 
             FavouriteScreen(
                 uiState = homeViewModel.uiState,
@@ -104,7 +103,7 @@ fun NavigationSetup(navController: NavHostController) {
                 },
                 viewModel = homeViewModel,
                 favouriteViewModel = FavouriteViewModel(),
-                roomViewModel = roomViewModel
+               // roomViewModel = roomViewModel
             )
         }
         composable(Detail.routeWithArgs, arguments = Detail.arguments) {

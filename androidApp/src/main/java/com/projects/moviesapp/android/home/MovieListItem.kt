@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.projects.moviesapp.android.R
 import com.projects.moviesapp.android.dao.MoviesViewModel
-import com.projects.moviesapp.android.favourite.FavouriteViewModel
 import com.projects.moviesapp.domain.model.Movie
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
@@ -31,10 +31,10 @@ fun MovieListItem(
     movie: Movie,
     onMovieClick: (Movie) -> Unit,
     viewModel: HomeViewModel,
-    favouriteViewModel: FavouriteViewModel,
-    roomViewModel: MoviesViewModel
+   // favouriteViewModel: FavouriteViewModel,
+    //roomViewModel: MoviesViewModel
 ) {
-
+    val roomViewModel: MoviesViewModel = koinViewModel()
     Card(
         modifier = modifier
             .height(220.dp)
@@ -104,6 +104,7 @@ fun MovieListItem(
 
                             } else {
                                 // viewModel.favouriteList.value?.remove(movie)
+                               // roomViewModel.insert(movie)
                                 viewModel.removeFromList(movie)
                                 movie.isFavourite = false
 
