@@ -21,24 +21,25 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.projects.moviesapp.android.Red
+import com.projects.moviesapp.android.dao.Movies
 import com.projects.moviesapp.android.home.HomeScreenState
 import com.projects.moviesapp.android.home.HomeViewModel
 import com.projects.moviesapp.android.home.MovieListItem
-import com.projects.moviesapp.domain.model.Movie
+import com.projects.moviesapp.domain.model.MainMovie
 
 @Composable
 fun FavouriteScreen(
     modifier: Modifier = Modifier,
     uiState: HomeScreenState,
 //    loadNextMovies: (Boolean) -> Unit,
-    navigateToDetail: (Movie) -> Unit,
+    navigateToDetail: (MainMovie) -> Unit,
     viewModel: HomeViewModel,
     favouriteViewModel: FavouriteViewModel,
    // roomViewModel: MoviesViewModel,
     // items:MutableList<Movie>
 ) {
 
-    var listAlll= mutableListOf<Movie>()
+    var listAlll= mutableListOf<MainMovie>()
     viewModel.myListLiveData.observeForever{
         listAlll = viewModel.getList()
         Log.d(TAG, "Sodiqjon999: ${listAlll}")
@@ -74,7 +75,7 @@ fun FavouriteScreen(
                     uiState.movies,
                     key = { _, movie -> movie.id }
                 ) { index, movie ->
-                    MovieListItem(
+                    FavouriteListItem(
                         movie = movie,
                         onMovieClick = { navigateToDetail(movie) },
                         viewModel = viewModel,
@@ -108,7 +109,7 @@ fun FavouriteScreen(
 
 }
 
-fun filterItems(searchQuery: String, commonlist: List<Movie>): List<Movie> {
+fun filterItems(searchQuery: String, commonlist: List<MainMovie>): List<MainMovie> {
     return commonlist.filter { item ->
         item.title.contains(searchQuery, ignoreCase = true)
     }

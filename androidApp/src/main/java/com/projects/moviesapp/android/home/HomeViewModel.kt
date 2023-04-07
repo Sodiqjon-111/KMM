@@ -9,19 +9,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.projects.moviesapp.domain.model.Movie
+import com.projects.moviesapp.domain.model.MainMovie
 import com.projects.moviesapp.domain.usecase.GetMoviesUseCase
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
     val getMoviesUseCase: GetMoviesUseCase
 ) : ViewModel() {
-    val _myListLiveData = MutableLiveData<MutableList<Movie>>()
-    val myListLiveData: LiveData<MutableList<Movie>> get() = _myListLiveData
+    val _myListLiveData = MutableLiveData<MutableList<MainMovie>>()
+    val myListLiveData: LiveData<MutableList<MainMovie>> get() = _myListLiveData
 
     var uiState by mutableStateOf(HomeScreenState())
-    var viewModelAllList = emptyList<Movie>()
-    var  favouriteList = MutableLiveData<MutableList<Movie>>()
+    var viewModelAllList = emptyList<MainMovie>()
+    var  favouriteList = MutableLiveData<MutableList<MainMovie>>()
     private var currentPage = 1
 
     init {
@@ -64,20 +64,20 @@ class HomeViewModel(
             }
         }
     }
-    fun addToList(item: Movie) {
+    fun addToList(item: MainMovie) {
         val currentlist = _myListLiveData.value ?: mutableListOf()
         currentlist.add(item)
         _myListLiveData.value = currentlist
     }
 
 
-    fun removeFromList(item: Movie) {
+    fun removeFromList(item: MainMovie) {
         val currentlist = _myListLiveData.value ?: mutableListOf()
         currentlist.add(item)
         _myListLiveData.value = currentlist
     }
 
-    fun getList(): MutableList<Movie> {
+    fun getList(): MutableList<MainMovie> {
         return _myListLiveData.value ?: mutableListOf()
     }
 
@@ -88,7 +88,7 @@ class HomeViewModel(
 data class HomeScreenState(
     var loading: Boolean = false,
     var refreshing: Boolean = false,
-    var movies: List<Movie> = listOf(),
+    var movies: List<MainMovie> = listOf(),
     var errorMessage: String? = null,
     var loadFinished: Boolean = false
 )

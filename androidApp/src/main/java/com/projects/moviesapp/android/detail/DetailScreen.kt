@@ -48,7 +48,7 @@ fun DetailScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                uiState.movie?.let { movie ->
+                uiState.mainMovie?.let { movie ->
                     Column(
                         modifier = modifier
                             .fillMaxSize()

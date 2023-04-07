@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.projects.moviesapp.android.Red
 import com.projects.moviesapp.android.favourite.FavouriteViewModel
-import com.projects.moviesapp.domain.model.Movie
+import com.projects.moviesapp.domain.model.MainMovie
 
 @ExperimentalComposeUiApi
 @OptIn(ExperimentalMaterialApi::class)
@@ -36,7 +36,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: HomeScreenState,
     loadNextMovies: (Boolean) -> Unit,
-    navigateToDetail: (Movie) -> Unit,
+    navigateToDetail: (MainMovie) -> Unit,
     viewModel: HomeViewModel,
     favouriteViewModel: FavouriteViewModel,
     //roomViewModel: MoviesViewModel
@@ -130,7 +130,7 @@ fun HomeScreen(
 
 }
 
-fun filterItems(searchQuery: String, commonlist: List<Movie>): List<Movie> {
+fun filterItems(searchQuery: String, commonlist: List<MainMovie>): List<MainMovie> {
     return commonlist.filter { item ->
         item.title.contains(searchQuery, ignoreCase = true)
     }

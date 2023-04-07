@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.projects.moviesapp.domain.model.Movie
+import com.projects.moviesapp.domain.model.MainMovie
 import com.projects.moviesapp.domain.usecase.GetMovieUseCase
 import kotlinx.coroutines.launch
 
@@ -25,7 +25,7 @@ class DetailViewModel(
 
             uiState = try {
                 val movie = getMovieUseCase(movieId = movieId)
-                uiState.copy(loading = false, movie = movie)
+                uiState.copy(loading = false, mainMovie = movie)
             } catch (error: Throwable) {
                 uiState.copy(
                     loading = false,
@@ -38,7 +38,7 @@ class DetailViewModel(
 
 data class DetailScreenState(
     var loading: Boolean = false,
-    var movie: Movie? = null,
+    var mainMovie: MainMovie? = null,
     var errorMessage: String? = null
 )
 

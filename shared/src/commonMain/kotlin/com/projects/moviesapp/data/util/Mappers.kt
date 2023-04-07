@@ -1,11 +1,11 @@
 package com.projects.moviesapp.data.util
 
 import com.projects.moviesapp.data.remote.MovieRemote
-import com.projects.moviesapp.domain.model.Movie
+import com.projects.moviesapp.domain.model.MainMovie
 
 
-internal fun MovieRemote.toMovie(): Movie {
-    return Movie(
+internal fun MovieRemote.toMovie(): MainMovie {
+    return MainMovie(
         id = id,
         title = title,
         description = overview,

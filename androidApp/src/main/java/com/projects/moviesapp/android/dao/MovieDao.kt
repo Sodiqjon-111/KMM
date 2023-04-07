@@ -12,7 +12,6 @@ interface MovieDao {
     @Query("SELECT * FROM my_database")
     fun getAllMovies(): List<Movies>
 
-//    @Query("SELECT * FROM my_database")
-//    @NotNull
-//    suspend fun deleteMovie(movie: Movies)
+    @Query("DELETE FROM my_database WHERE id = :id")
+    suspend fun deleteMovie(movie: Movies)
 }

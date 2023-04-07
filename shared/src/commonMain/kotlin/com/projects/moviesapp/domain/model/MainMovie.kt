@@ -1,6 +1,6 @@
 package com.projects.moviesapp.domain.model
-
-data class Movie(
+@kotlinx.serialization.Serializable
+data class MainMovie(
     val id: Int,
     val title: String,
     val description: String,
