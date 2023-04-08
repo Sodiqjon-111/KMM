@@ -1,7 +1,7 @@
 package com.projects.moviesapp.android.favourite
 
-import android.content.ContentValues.TAG
-import android.util.Log
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -14,48 +14,59 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.projects.moviesapp.android.Red
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import com.projects.moviesapp.android.dao.DatabaseManager
+import com.projects.moviesapp.android.dao.MovieDao
 import com.projects.moviesapp.android.dao.Movies
-import com.projects.moviesapp.android.home.HomeScreenState
-import com.projects.moviesapp.android.home.HomeViewModel
-import com.projects.moviesapp.android.home.MovieListItem
 import com.projects.moviesapp.domain.model.MainMovie
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun FavouriteScreen(
     modifier: Modifier = Modifier,
-    uiState: HomeScreenState,
-//    loadNextMovies: (Boolean) -> Unit,
     navigateToDetail: (MainMovie) -> Unit,
-    viewModel: HomeViewModel,
-    favouriteViewModel: FavouriteViewModel,
-   // roomViewModel: MoviesViewModel,
-    // items:MutableList<Movie>
 ) {
+    val context = LocalContext.current
+    val myDao = remember { DatabaseManager.getInstance(context).movieDao() }
+    val moviesState = remember { mutableStateOf(emptyList<Movies>()) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    var listAlll= mutableListOf<MainMovie>()
-    viewModel.myListLiveData.observeForever{
-        listAlll = viewModel.getList()
-        Log.d(TAG, "Sodiqjon999: ${listAlll}")
-    }
 
     Column(
         modifier = modifier
             .fillMaxSize()
     ) {
 
-        var searchQuery by remember { mutableStateOf("") }
-        SearchBar(searchQuery) { query ->
-            searchQuery = query
-            //uiState.movies = filterItems(searchQuery, listAll)
-            // Log.d(ControlsProviderService.TAG, "============${uiState.movies}")
+        var moviesList by remember { mutableStateOf(emptyList<Movies>()) }
+        LaunchedEffect(Unit) {
+            val myResult = getAllMovieee(myDao = myDao, lifecycleOwner)
+            moviesList = myResult
+            moviesState.value = myResult
         }
+        var searchQuery by remember { mutableStateOf("") }
+        SearchBar(searchQuery, onTextChange = { query ->
+            searchQuery = query
+            moviesState.value = filterItems(searchQuery, moviesList)
+        }, onClearText = {
+            keyboardController?.hide()
+            searchQuery = ""
+            moviesState.value = filterItems(searchQuery, moviesList)
+        })
         Box(
             modifier = modifier
                 .fillMaxSize()
@@ -68,48 +79,57 @@ fun FavouriteScreen(
                 contentPadding = PaddingValues(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
-            )
-
-            {
+            ) {
+                //   Log.d(TAG, "FavouriteScreen:   ${myResult}")
                 itemsIndexed(
-                    uiState.movies,
+                    moviesState.value,
                     key = { _, movie -> movie.id }
                 ) { index, movie ->
                     FavouriteListItem(
                         movie = movie,
-                        onMovieClick = { navigateToDetail(movie) },
-                        viewModel = viewModel,
-                       /// favouriteViewModel = favouriteViewModel,
-                      //  roomViewModel = roomViewModel
-                    )
-                    if (index >= uiState.movies.size - 1 && !uiState.loading && !uiState.loadFinished) {
-                        LaunchedEffect(key1 = Unit, block = { })
-                    }
-                }
-                if (uiState.loading && uiState.movies.isNotEmpty()) {
-                    item(span = { GridItemSpan(1) }) {
-                        Row(
-                            modifier = modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            CircularProgressIndicator(
-                                color = Red
+                        onMovieClick = {
+                            navigateToDetail(
+                                MainMovie(
+                                    movie.id, movie.title,
+                                    movie.description, movie.imageUrl, movie.releaseDate
+                                )
                             )
+                        },
+                        onDeleteBtn = {
+                            deleteMovieItem(movie, myDao, lifecycleOwner) { success ->
+                                if (success) {
+                                    lifecycleOwner.lifecycleScope.launch {
+                                        val myResult =
+                                            getAllMovieee(myDao = myDao, lifecycleOwner)
+                                        moviesState.value = myResult
+                                    }
+
+                                    ShowToastMessage("Movie deleted",lifecycleOwner,context)
+                                } else {
+                                    // todo
+                                }
+                            }
                         }
+                    )
+                }
+                item(span = { GridItemSpan(1) }) {
+                    Row(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                     }
                 }
             }
         }
 
-
     }
 
 }
 
-fun filterItems(searchQuery: String, commonlist: List<MainMovie>): List<MainMovie> {
+fun filterItems(searchQuery: String, commonlist: List<Movies>): List<Movies> {
     return commonlist.filter { item ->
         item.title.contains(searchQuery, ignoreCase = true)
     }
@@ -119,6 +139,7 @@ fun filterItems(searchQuery: String, commonlist: List<MainMovie>): List<MainMovi
 fun SearchBar(
     searchQuery: String,
     onTextChange: (String) -> Unit,
+    onClearText: () -> Unit
 ) {
     TextField(
         value = searchQuery,
@@ -129,10 +150,8 @@ fun SearchBar(
             if (!searchQuery.equals("")) {
                 IconButton(
                     onClick = {
-
-                        Log.d(TAG, "3333333333333333333")
-
-                        // Remove text from TextField when you press the 'X' icon
+                        onTextChange("")
+                        onClearText
                     }
                 ) {
                     Icon(
@@ -163,4 +182,46 @@ fun SearchBar(
             disabledIndicatorColor = Color.Transparent
         )
     )
+
+
 }
+
+fun deleteMovieItem(
+    movie: Movies,
+    myDao: MovieDao,
+    lifecycleOwner: LifecycleOwner,
+    callback: (Boolean) -> Unit
+) {
+    val coroutineScope = lifecycleOwner.lifecycleScope
+    coroutineScope.launch {
+        withContext(Dispatchers.IO) {
+            try {
+                myDao.deleteMovie(movie)
+                callback(true)
+            } catch (
+                e: Exception
+            ) {
+                callback(false)
+            }
+        }
+    }
+}
+
+
+suspend fun getAllMovieee(myDao: MovieDao, lifecycleOwner: LifecycleOwner): List<Movies> {
+    val coroutineScope = lifecycleOwner.lifecycleScope
+    coroutineScope.launch {
+        withContext(Dispatchers.IO) {
+            myDao.getAllMovies()
+        }
+    }
+    return myDao.getAllMovies()
+}
+
+fun ShowToastMessage(message: String,lifecycleOwner: LifecycleOwner,context: Context) {
+    val coroutineScope =lifecycleOwner.lifecycleScope
+    coroutineScope.launch {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+}
+

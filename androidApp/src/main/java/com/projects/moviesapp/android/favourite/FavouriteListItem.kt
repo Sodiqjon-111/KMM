@@ -8,45 +8,28 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.projects.moviesapp.android.R
-import com.projects.moviesapp.android.dao.DatabaseManager
-import com.projects.moviesapp.android.dao.MovieDao
 import com.projects.moviesapp.android.dao.Movies
-import com.projects.moviesapp.android.home.HomeViewModel
-import com.projects.moviesapp.domain.model.MainMovie
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 @SuppressLint("RememberReturnType")
 @Composable
 fun FavouriteListItem(
     modifier: Modifier = Modifier,
-    movie: MainMovie,
-    onMovieClick: (MainMovie) -> Unit,
-    viewModel: HomeViewModel,
-
-
-    ) {
-    val context = LocalContext.current
-    val myDao = remember { DatabaseManager.getInstance(context).movieDao() }
-
+    movie: Movies,
+    onMovieClick: (Movies) -> Unit,
+    onDeleteBtn: () -> Unit,
+) {
     Card(
         modifier = modifier
             .height(220.dp)
@@ -55,8 +38,7 @@ fun FavouriteListItem(
     ) {
         Column {
             Box(
-                modifier = modifier.weight(1f),
-                contentAlignment = Alignment.Center
+                modifier = modifier.weight(1f), contentAlignment = Alignment.Center
             ) {
                 AsyncImage(
                     model = movie.imageUrl,
@@ -69,8 +51,7 @@ fun FavouriteListItem(
 
                 Surface(
                     color = Color.Black.copy(alpha = 0.6f),
-                    modifier = modifier
-                        .size(50.dp),
+                    modifier = modifier.size(50.dp),
                     shape = CircleShape
                 ) {
                     Image(
@@ -102,97 +83,29 @@ fun FavouriteListItem(
                     Text(text = movie.releaseDate, style = MaterialTheme.typography.caption)
                 }
                 MyButton(
-                    movie = movie,
-                    myDao = myDao,
-                    isFavourite = movie.isFavourite
+                    onDeleteBtn = onDeleteBtn
                 )
 
             }
         }
     }
-
-
 }
 
-
 @Composable
-fun MyButton(movie: MainMovie, myDao: MovieDao, isFavourite: Boolean) {
-    val lifecycleOwner = LocalLifecycleOwner.current
+fun MyButton(onDeleteBtn: () -> Unit) {
     Box(
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()
     ) {
-        IconButton(modifier = Modifier.align(Alignment.CenterEnd), onClick = {
-            /* handle click event */
-            if (!isFavourite) {
-                deleteMovie(movie = movie, myDao = myDao, lifecycleOwner)
+        IconButton(modifier = Modifier.align(Alignment.CenterEnd), onClick = { onDeleteBtn() }) {
+            Icon(
+                painter = painterResource(id = R.drawable.delete),
+                contentDescription = null,
+                Modifier.size(36.dp),
+                tint = Color.White,
 
-            } else {
-                // deleteMovie(movie = movie, myDao = myDao, lifecycleOwner)
-
-            }
-            getAllMovie(movie = movie, myDao = myDao, lifecycleOwner)
-
-
-        }
-        ) {
-            if (isFavourite) {
-                Icon(
-                    painter = painterResource(id = R.drawable.delete),
-                    contentDescription = null,
-                    Modifier.size(36.dp),
-                    tint = Color.Red,
-
-                    )
-            } else {
-                Icon(
-                    painter = painterResource(id = R.drawable.delete),
-                    contentDescription = null,
-                    Modifier.size(36.dp),
-                    tint = Color.White,
-
-                    )
-            }
-
-
-        }
-    }
-}
-
-
-fun insertToRoom(movie: MainMovie, myDao: MovieDao, lifecycleOwner: LifecycleOwner) {
-    val coroutineScope = lifecycleOwner.lifecycleScope
-    coroutineScope.launch {
-        withContext(Dispatchers.IO) {
-            val moviess= Movies(movie)
-            myDao.insert(moviess)
-            println("id---------insert------------: ${movie.id}, name--------------------: ${movie.title}")
-        }
-    }
-
-
-}
-
-fun deleteMovie(movie: MainMovie, myDao: MovieDao, lifecycleOwner: LifecycleOwner) {
-    val coroutineScope = lifecycleOwner.lifecycleScope
-    coroutineScope.launch {
-        withContext(Dispatchers.IO) {
-            val moviess= Movies(movie)
-            myDao.deleteMovie(moviess)
-            println("id----------delete-----------: ${movie.id}, name--------------------: ${movie.title}")
-        }
-    }
-
-
-}
-
-fun getAllMovie(movie: MainMovie, myDao: MovieDao, lifecycleOwner: LifecycleOwner) {
-    val coroutineScope = lifecycleOwner.lifecycleScope
-    coroutineScope.launch {
-        withContext(Dispatchers.IO) {
-            myDao.getAllMovies()
-            println("id----------getAll-----------: ${myDao.getAllMovies().size}, name--------------------: ${movie.title}")
+                )
         }
     }
 }

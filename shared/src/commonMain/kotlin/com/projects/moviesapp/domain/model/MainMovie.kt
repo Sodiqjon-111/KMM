@@ -1,4 +1,5 @@
 package com.projects.moviesapp.domain.model
+
 @kotlinx.serialization.Serializable
 data class MainMovie(
     val id: Int,
@@ -6,5 +7,4 @@ data class MainMovie(
     val description: String,
     val imageUrl: String,
     val releaseDate: String,
-    var isFavourite: Boolean=false,
 )

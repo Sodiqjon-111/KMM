@@ -1,6 +1,7 @@
 package com.projects.moviesapp.android.dao
 
 import androidx.room.TypeConverter
+import com.google.gson.Gson
 
 class MoviesTypeConverter {
     @TypeConverter

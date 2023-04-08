@@ -3,7 +3,6 @@ package com.projects.moviesapp.android.dao
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.projects.moviesapp.domain.model.MainMovie
-import org.jetbrains.annotations.NotNull
 
 @Entity(tableName = "my_database")
 data class Movies(
@@ -13,7 +12,6 @@ data class Movies(
     val description: String,
     val imageUrl: String,
     val releaseDate: String,
-    //var isFavourite: Boolean = false,
 ) {
     constructor(
         mainMovie: MainMovie
@@ -23,6 +21,5 @@ data class Movies(
         mainMovie.description,
         mainMovie.imageUrl,
         mainMovie.releaseDate,
-       // mainMovie.isFavourite
     )
 }

@@ -1,6 +1,8 @@
 package com.projects.moviesapp.android.home
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -39,7 +41,6 @@ fun MovieListItem(
     modifier: Modifier = Modifier,
     movie: MainMovie,
     onMovieClick: (MainMovie) -> Unit,
-    viewModel: HomeViewModel,
 ) {
     val context = LocalContext.current
     val myDao = remember { DatabaseManager.getInstance(context).movieDao() }
@@ -52,8 +53,7 @@ fun MovieListItem(
     ) {
         Column {
             Box(
-                modifier = modifier.weight(1f),
-                contentAlignment = Alignment.Center
+                modifier = modifier.weight(1f), contentAlignment = Alignment.Center
             ) {
                 AsyncImage(
                     model = movie.imageUrl,
@@ -66,8 +66,7 @@ fun MovieListItem(
 
                 Surface(
                     color = Color.Black.copy(alpha = 0.6f),
-                    modifier = modifier
-                        .size(50.dp),
+                    modifier = modifier.size(50.dp),
                     shape = CircleShape
                 ) {
                     Image(
@@ -99,21 +98,16 @@ fun MovieListItem(
                     Text(text = movie.releaseDate, style = MaterialTheme.typography.caption)
                 }
                 MyButton(
-                    movie = movie,
-                    myDao = myDao,
-                    isFavourite = movie.isFavourite
+                    movie = movie, myDao = myDao, context = context
                 )
 
             }
         }
     }
-
-
 }
 
-
 @Composable
-fun MyButton(movie: MainMovie, myDao: MovieDao, isFavourite: Boolean) {
+fun MyButton(movie: MainMovie, myDao: MovieDao, context: Context) {
     val lifecycleOwner = LocalLifecycleOwner.current
     Box(
         modifier = Modifier
@@ -121,38 +115,16 @@ fun MyButton(movie: MainMovie, myDao: MovieDao, isFavourite: Boolean) {
             .fillMaxWidth()
     ) {
         IconButton(modifier = Modifier.align(Alignment.CenterEnd), onClick = {
-            /* handle click event */
-            if (!isFavourite) {
-                insertToRoom(movie = movie, myDao = myDao, lifecycleOwner)
+            insertToRoom(movie = movie, myDao = myDao, lifecycleOwner)
+            ShowToastMessage("Video added to your Storage", lifecycleOwner, context = context)
+        }) {
 
-            } else {
-                // deleteMovie(movie = movie, myDao = myDao, lifecycleOwner)
-
-            }
-            getAllMovie(movie = movie, myDao = myDao, lifecycleOwner)
-
-
-        }
-        ) {
-            if (isFavourite) {
-                Icon(
-                    painter = painterResource(id = R.drawable.favourite),
-                    contentDescription = null,
-                    Modifier.size(36.dp),
-                    tint = Color.Red,
-
-                    )
-            } else {
-                Icon(
-                    painter = painterResource(id = R.drawable.favourite),
-                    contentDescription = null,
-                    Modifier.size(36.dp),
-                    tint = Color.White,
-
-                    )
-            }
-
-
+            Icon(
+                painter = painterResource(id = R.drawable.favourite),
+                contentDescription = null,
+                Modifier.size(36.dp),
+                tint = Color.White,
+            )
         }
     }
 }
@@ -162,37 +134,20 @@ fun insertToRoom(movie: MainMovie, myDao: MovieDao, lifecycleOwner: LifecycleOwn
     val coroutineScope = lifecycleOwner.lifecycleScope
     coroutineScope.launch {
         withContext(Dispatchers.IO) {
-            val moviess=Movies(movie)
+            val moviess = Movies(movie)
             myDao.insert(moviess)
-            println("id---------insert------------: ${movie.id}, name--------------------: ${movie.title}")
         }
     }
-
-
 }
 
-fun deleteMovie(movie: MainMovie, myDao: MovieDao, lifecycleOwner: LifecycleOwner) {
+fun ShowToastMessage(message: String, lifecycleOwner: LifecycleOwner, context: Context) {
     val coroutineScope = lifecycleOwner.lifecycleScope
     coroutineScope.launch {
-        withContext(Dispatchers.IO) {
-            val moviess=Movies(movie)
-            myDao.deleteMovie(moviess)
-            println("id----------delete-----------: ${movie.id}, name--------------------: ${movie.title}")
-        }
-    }
-
-
-}
-
-fun getAllMovie(movie: MainMovie, myDao: MovieDao, lifecycleOwner: LifecycleOwner) {
-    val coroutineScope = lifecycleOwner.lifecycleScope
-    coroutineScope.launch {
-        withContext(Dispatchers.IO) {
-            myDao.getAllMovies()
-            println("id----------getAll-----------: ${myDao.getAllMovies().size}, name--------------------: ${movie.title}")
-        }
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }
+
+
 
 
 

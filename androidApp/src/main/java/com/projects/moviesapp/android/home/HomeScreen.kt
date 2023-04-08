@@ -26,7 +26,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.projects.moviesapp.android.Red
-import com.projects.moviesapp.android.favourite.FavouriteViewModel
 import com.projects.moviesapp.domain.model.MainMovie
 
 @ExperimentalComposeUiApi
@@ -38,39 +37,25 @@ fun HomeScreen(
     loadNextMovies: (Boolean) -> Unit,
     navigateToDetail: (MainMovie) -> Unit,
     viewModel: HomeViewModel,
-    favouriteViewModel: FavouriteViewModel,
-    //roomViewModel: MoviesViewModel
 ) {
 
-
     val keyboardController = LocalSoftwareKeyboardController.current
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.refreshing,
+    val pullRefreshState = rememberPullRefreshState(refreshing = uiState.refreshing,
         onRefresh = { loadNextMovies(true) })
-
-
-    viewModel.myListLiveData.observeForever {
-    }
-
     val listAll = viewModel.viewModelAllList
     Column(
-        modifier = modifier
-            .fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
 
         var searchQuery by remember { mutableStateOf("") }
-        SearchBar(searchQuery,
-            onTextChange = { query ->
-                searchQuery = query
-                uiState.movies = filterItems(searchQuery, listAll)
-            },
-            onClearText = {
-                // Handle onClearText event
-                keyboardController?.hide()
-                searchQuery = ""
-                uiState.movies = filterItems(searchQuery, listAll)
-            }
-        )
+        SearchBar(searchQuery, onTextChange = { query ->
+            searchQuery = query
+            uiState.movies = filterItems(searchQuery, listAll)
+        }, onClearText = {
+            keyboardController?.hide()
+            searchQuery = ""
+            uiState.movies = filterItems(searchQuery, listAll)
+        })
         Box(
             modifier = modifier
                 .fillMaxSize()
@@ -84,17 +69,10 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                itemsIndexed(
-                    uiState.movies,
-                    key = { _, movie -> movie.id }
-                ) { index, movie ->
+                itemsIndexed(uiState.movies, key = { _, movie -> movie.id }) { index, movie ->
                     MovieListItem(
                         movie = movie,
                         onMovieClick = { navigateToDetail(movie) },
-                        viewModel = viewModel,
-                        //favouriteViewModel = favouriteViewModel,
-                     //   roomViewModel = roomViewModel
-
                     )
                     if (index >= uiState.movies.size - 1 && !uiState.loading && !uiState.loadFinished) {
                         LaunchedEffect(key1 = Unit, block = { loadNextMovies(false) })
@@ -124,8 +102,6 @@ fun HomeScreen(
 
             )
         }
-
-
     }
 
 }
@@ -138,14 +114,12 @@ fun filterItems(searchQuery: String, commonlist: List<MainMovie>): List<MainMovi
 
 @Composable
 fun SearchBar(
-    searchQuery: String,
-    onTextChange: (String) -> Unit,
+    searchQuery: String, onTextChange: (String) -> Unit,
     onClearText: () -> Unit
 ) {
     Surface(
         shape = RoundedCornerShape(20.dp),
-    ) {
-    }
+    ) {}
     TextField(
         value = searchQuery,
         onValueChange = { onTextChange(it) },
@@ -153,13 +127,11 @@ fun SearchBar(
         leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search Icon") },
         trailingIcon = {
             if (!searchQuery.equals("")) {
-                IconButton(
-                    onClick = {
-                        onTextChange("")
-                        onClearText
-                        // Remove text from TextField when you press the 'X' icon
-                    }
-                ) {
+                IconButton(onClick = {
+                    onTextChange("")
+                    onClearText
+                    // Remove text from TextField when you press the 'X' icon
+                }) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = "",
