@@ -10,7 +10,8 @@ internal fun MovieRemote.toMovie(): MainMovie {
         title = title,
         description = overview,
         imageUrl = getImageUrl(posterImage),
-        releaseDate = releaseDate
+        releaseDate = releaseDate,
+        vote_average=vote_average
     )
 }
 

@@ -12,6 +12,7 @@ data class Movies(
     val description: String,
     val imageUrl: String,
     val releaseDate: String,
+    val vote_average: Double,
 ) {
     constructor(
         mainMovie: MainMovie
@@ -21,5 +22,6 @@ data class Movies(
         mainMovie.description,
         mainMovie.imageUrl,
         mainMovie.releaseDate,
+        mainMovie.vote_average
     )
 }

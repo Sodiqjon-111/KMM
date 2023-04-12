@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -17,15 +18,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.projects.moviesapp.android.colors.SearchbarColor
+import com.projects.moviesapp.android.colors.fonts
 import com.projects.moviesapp.android.dao.DatabaseManager
 import com.projects.moviesapp.android.dao.MovieDao
 import com.projects.moviesapp.android.dao.Movies
@@ -50,6 +53,7 @@ fun FavouriteScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(Color.White)
     ) {
 
         var moviesList by remember { mutableStateOf(emptyList<Movies>()) }
@@ -70,7 +74,7 @@ fun FavouriteScreen(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .background(color = MaterialTheme.colors.background)
+                .background(color = Color.White)
 
         ) {
 
@@ -90,8 +94,12 @@ fun FavouriteScreen(
                         onMovieClick = {
                             navigateToDetail(
                                 MainMovie(
-                                    movie.id, movie.title,
-                                    movie.description, movie.imageUrl, movie.releaseDate
+                                    movie.id,
+                                    movie.title,
+                                    movie.description,
+                                    movie.imageUrl,
+                                    movie.releaseDate,
+                                    movie.vote_average
                                 )
                             )
                         },
@@ -104,7 +112,7 @@ fun FavouriteScreen(
                                         moviesState.value = myResult
                                     }
 
-                                    ShowToastMessage("Movie deleted",lifecycleOwner,context)
+                                    ShowToastMessage("Movie deleted", lifecycleOwner, context)
                                 } else {
                                     // todo
                                 }
@@ -144,7 +152,15 @@ fun SearchBar(
     TextField(
         value = searchQuery,
         onValueChange = { onTextChange(it) },
-        placeholder = { Text("Search") },
+        placeholder = {
+            Text(
+                "New movies", color = Color.Black,
+                fontFamily = fonts,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize =
+                20.sp
+            )
+        },
         leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search Icon") },
         trailingIcon = {
             if (!searchQuery.equals("")) {
@@ -166,24 +182,25 @@ fun SearchBar(
         },
 
         singleLine = true,
-        shape = RectangleShape,
+        shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp, 8.dp, 16.dp, 0.dp),
-        textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
+        textStyle = TextStyle(
+            color = Color.Black, fontSize = 18.sp,
+        ),
+
         colors = TextFieldDefaults.textFieldColors(
-            textColor = Color.White,
-            cursorColor = Color.White,
-            leadingIconColor = Color.White,
-            trailingIconColor = Color.White,
-            backgroundColor = MaterialTheme.colors.primary,
+            textColor = Color.Black,
+            cursorColor = Color.Black,
+            leadingIconColor = Color.Black,
+            trailingIconColor = Color.Black,
+            backgroundColor = SearchbarColor,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
         )
     )
-
-
 }
 
 fun deleteMovieItem(
@@ -218,8 +235,8 @@ suspend fun getAllMovieee(myDao: MovieDao, lifecycleOwner: LifecycleOwner): List
     return myDao.getAllMovies()
 }
 
-fun ShowToastMessage(message: String,lifecycleOwner: LifecycleOwner,context: Context) {
-    val coroutineScope =lifecycleOwner.lifecycleScope
+fun ShowToastMessage(message: String, lifecycleOwner: LifecycleOwner, context: Context) {
+    val coroutineScope = lifecycleOwner.lifecycleScope
     coroutineScope.launch {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }

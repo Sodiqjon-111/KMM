@@ -67,6 +67,7 @@ sealed class Screens(val route: String) {
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun NavigationSetup(navController: NavHostController) {
+
     NavHost(navController, startDestination = BottomNavItem.Home.route) {
         composable(BottomNavItem.Home.route) {
             val homeViewModel: HomeViewModel = koinViewModel()
@@ -84,8 +85,6 @@ fun NavigationSetup(navController: NavHostController) {
             )
         }
         composable(BottomNavItem.Settings.route) {
-            val homeViewModel: HomeViewModel = koinViewModel()
-
             FavouriteScreen(
                 navigateToDetail = {
                     navController.navigate(
@@ -101,7 +100,6 @@ fun NavigationSetup(navController: NavHostController) {
 
             DetailScreen(uiState = detailViewModel.uiState, navController = navController)
         }
-
     }
 }
 
@@ -125,7 +123,7 @@ fun BottomNavigationBar(
         BottomNavItem.Home, BottomNavItem.Settings
     )
 
-    BottomNavigation {
+    BottomNavigation(modifier = Modifier, backgroundColor = MaterialTheme.colors.background) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         items.forEach { item ->
@@ -133,9 +131,8 @@ fun BottomNavigationBar(
                 Icon(
                     imageVector = item.icon, contentDescription = item.titleRes
                 )
-            },
-                label = { Text(text = item.titleRes) },
-                selected = currentRoute == item.route,
+            }, label = { Text(text = item.titleRes) }, selected = currentRoute == item.route,
+
                 onClick = {
                     navController.navigate(item.route) {
                         navController.graph.startDestinationRoute?.let { route ->

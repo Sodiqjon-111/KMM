@@ -7,4 +7,5 @@ data class MainMovie(
     val description: String,
     val imageUrl: String,
     val releaseDate: String,
+    val vote_average: Double,
 )

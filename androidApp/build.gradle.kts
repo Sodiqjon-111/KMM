@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
-    id ("kotlin-kapt")
-    id ("kotlin-parcelize")
+    id("kotlin-kapt")
+    id("kotlin-parcelize")
     kotlin("android")
     kotlin("plugin.serialization") version "1.6.0"
 }
@@ -48,8 +48,8 @@ dependencies {
     val accompanistVersion = "0.28.0"
     val navVersion = "2.5.3"
     implementation(project(":shared"))
-    implementation("androidx.compose.ui:ui:1.4.0")
-    implementation("androidx.compose.ui:ui-tooling:1.4.0")
+    implementation("androidx.compose.ui:ui:1.4.1")
+    implementation("androidx.compose.ui:ui-tooling:1.4.1")
     implementation("androidx.compose.ui:ui-tooling-preview:1.4.0")
     implementation("androidx.compose.foundation:foundation:1.4.0")
     implementation("androidx.compose.material:material:1.4.0")
@@ -62,11 +62,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0") // add this
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
     // Coroutine Lifecycle Scopes
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 
 
-    implementation ("com.google.code.gson:gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.9.0")
 
     // Room
     val room_version = "2.5.0"
@@ -75,6 +75,9 @@ dependencies {
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
-    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+    implementation("androidx.paging:paging-compose:1.0.0-alpha09")
+    implementation("com.google.accompanist:accompanist-pager:0.20.0")
+
 
 }

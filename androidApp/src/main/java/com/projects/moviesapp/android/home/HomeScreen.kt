@@ -20,12 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.projects.moviesapp.android.Red
+import com.projects.moviesapp.android.colors.SearchbarColor
+import com.projects.moviesapp.android.colors.fonts
 import com.projects.moviesapp.domain.model.MainMovie
 
 @ExperimentalComposeUiApi
@@ -44,22 +46,27 @@ fun HomeScreen(
         onRefresh = { loadNextMovies(true) })
     val listAll = viewModel.viewModelAllList
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White)
     ) {
 
         var searchQuery by remember { mutableStateOf("") }
-        SearchBar(searchQuery, onTextChange = { query ->
-            searchQuery = query
-            uiState.movies = filterItems(searchQuery, listAll)
-        }, onClearText = {
-            keyboardController?.hide()
-            searchQuery = ""
-            uiState.movies = filterItems(searchQuery, listAll)
-        })
+        SearchBar(
+            searchQuery,
+            onTextChange = { query ->
+                searchQuery = query
+                uiState.movies = filterItems(searchQuery, listAll)
+
+            }, onClearText = {
+                keyboardController?.hide()
+                searchQuery = ""
+                uiState.movies = filterItems(searchQuery, listAll)
+            })
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .background(color = MaterialTheme.colors.background)
+                .background(color = Color.White)
                 .pullRefresh(state = pullRefreshState)
         ) {
 
@@ -118,12 +125,20 @@ fun SearchBar(
     onClearText: () -> Unit
 ) {
     Surface(
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(10.dp),
     ) {}
     TextField(
         value = searchQuery,
         onValueChange = { onTextChange(it) },
-        placeholder = { Text("Search") },
+        placeholder = {
+            Text(
+                "New movies", color = Color.Black,
+                fontFamily = fonts,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize =
+                20.sp
+            )
+        },
         leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search Icon") },
         trailingIcon = {
             if (!searchQuery.equals("")) {
@@ -144,17 +159,20 @@ fun SearchBar(
         },
 
         singleLine = true,
-        shape = RectangleShape,
+        shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp, 8.dp, 16.dp, 0.dp),
-        textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
+        textStyle = TextStyle(
+            color = Color.Black, fontSize = 18.sp,
+        ),
+
         colors = TextFieldDefaults.textFieldColors(
-            textColor = Color.White,
-            cursorColor = Color.White,
-            leadingIconColor = Color.White,
-            trailingIconColor = Color.White,
-            backgroundColor = MaterialTheme.colors.primary,
+            textColor = Color.Black,
+            cursorColor = Color.Black,
+            leadingIconColor = Color.Black,
+            trailingIconColor = Color.Black,
+            backgroundColor = SearchbarColor,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
